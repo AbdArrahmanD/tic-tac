@@ -5,7 +5,3 @@ class Game {
     // Complete Here
   }
 }
-
-class Nhg {
-  String dd = '';
-}
