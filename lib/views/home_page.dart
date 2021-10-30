@@ -67,16 +67,25 @@ class _MyHomePageState extends State<MyHomePage> {
                               ? null
                               : () {
                                   myFun(index);
+                                  turns++;
                                 },
                           child: Container(
                             decoration: BoxDecoration(
                               color: Theme.of(context).primaryColor,
                               borderRadius: BorderRadius.circular(16.0),
                             ),
-                            child: const Center(
+                            child: Center(
                               child: Text(
-                                'x',
-                                style: TextStyle(fontSize: 45),
+                                Player.playerX.contains(index)
+                                    ? 'x'
+                                    : Player.playerO.contains(index)
+                                        ? 'o'
+                                        : '',
+                                style: TextStyle(
+                                    fontSize: 65,
+                                    color: Player.playerX.contains(index)
+                                        ? Colors.blue
+                                        : Colors.red),
                               ),
                             ),
                           ),
@@ -90,11 +99,15 @@ class _MyHomePageState extends State<MyHomePage> {
         padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
         child: FloatingActionButton.extended(
           onPressed: () {
-            turns = 0;
-            gameOver = false;
-            activePlayer = 'X';
-            game = Game();
-            result = '';
+            setState(() {
+              Player.playerO = [];
+              Player.playerX = [];
+              turns = 0;
+              gameOver = false;
+              activePlayer = 'X';
+              game = Game();
+              result = '';
+            });
           },
           label: const Text(
             'replay again',
@@ -111,6 +124,20 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void myFun(int index) {
-    game.playGame(index, activePlayer);
+    if ((Player.playerO.isEmpty || !Player.playerO.contains(index)) &&
+        (Player.playerX.isEmpty || !Player.playerX.contains(index))) {
+      game.playGame(index, activePlayer);
+      updateState();
+    }
+    if (!isSwitched && !gameOver && turns < 4) {
+      game.autoPlay(activePlayer);
+      updateState();
+    }
+  }
+
+  void updateState() {
+    setState(() {
+      activePlayer = activePlayer == 'X' ? 'O' : 'X';
+    });
   }
 }
