@@ -139,5 +139,16 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       activePlayer = activePlayer == 'X' ? 'O' : 'X';
     });
+    game.checkWinner();
+    if (Game.winner != '') {
+      gameOver = true;
+      result = '${Game.winner} is The Winner';
+    } else {
+      if (!isSwitched) {
+        if (turns == 4) result = 'It\'s Tie';
+      } else {
+        if (turns == 8) result = 'It\'s Tie';
+      }
+    }
   }
 }

@@ -9,7 +9,18 @@ class Player {
   static List<int> playerO = [];
 }
 
+extension ContainsAll on List {
+  bool containsAll(int a, int b, [int? c]) {
+    if (c == null) {
+      return contains(a) && contains(b);
+    } else {
+      return contains(a) && contains(b) && contains(c);
+    }
+  }
+}
+
 class Game {
+  static String winner = '';
   void playGame(int index, String activePlayer) {
     if (activePlayer == 'X') {
       Player.playerX.add(index);
@@ -18,7 +29,30 @@ class Game {
     }
   }
 
-  checkWinner() {}
+  checkWinner() {
+    if (Player.playerX.containsAll(0, 1, 2) ||
+        Player.playerX.containsAll(3, 4, 5) ||
+        Player.playerX.containsAll(6, 7, 8) ||
+        Player.playerX.containsAll(0, 3, 6) ||
+        Player.playerX.containsAll(1, 4, 7) ||
+        Player.playerX.containsAll(2, 5, 8) ||
+        Player.playerX.containsAll(0, 4, 8) ||
+        Player.playerX.containsAll(2, 4, 6)) {
+      winner = 'X';
+    } else if (Player.playerO.containsAll(0, 1, 2) ||
+        Player.playerO.containsAll(3, 4, 5) ||
+        Player.playerO.containsAll(6, 7, 8) ||
+        Player.playerO.containsAll(0, 3, 6) ||
+        Player.playerO.containsAll(1, 4, 7) ||
+        Player.playerO.containsAll(2, 5, 8) ||
+        Player.playerO.containsAll(0, 4, 8) ||
+        Player.playerO.containsAll(2, 4, 6)) {
+      winner = 'O';
+    } else {
+      winner = '';
+    }
+  }
+
   autoPlay(String activePlayer) {
     // ignore: unused_local_variable
     int index = 0;
