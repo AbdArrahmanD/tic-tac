@@ -34,7 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onChanged: (val) {
                 setState(() {
                   isSwitched = val;
-                  gameOver = val;
+                  // gameOver = val;
                 });
               },
             ),
@@ -63,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     9,
                     (index) => InkWell(
                           borderRadius: BorderRadius.circular(16.0),
-                          onTap: gameOver
+                          onTap: gameOver || game.filledcells().contains(index)
                               ? null
                               : () {
                                   myFun(index);
