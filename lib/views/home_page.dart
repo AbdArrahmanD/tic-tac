@@ -18,83 +18,39 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isSwitched = false;
   @override
   Widget build(BuildContext context) {
+    final isLandScape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            SwitchListTile.adaptive(
-              title: const Text(
-                'Turn On/Off two player',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 25,
-                ),
+        child: MediaQuery.of(context).orientation == Orientation.portrait
+            ? Column(
+                children: [
+                  if (!isLandScape) ...firstBlock(),
+                  if (!isLandScape) expandedWidget(context),
+                  if (!isLandScape) ...lastBlock(),
+                ],
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Column(
+                      children: [
+                        ...firstBlock(),
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height / 7),
+                        ...lastBlock(),
+                      ],
+                    ),
+                  ),
+                  expandedWidget(context),
+                ],
               ),
-              value: isSwitched,
-              onChanged: (val) {
-                setState(() {
-                  isSwitched = val;
-                  // gameOver = val;
-                });
-              },
-            ),
-            Text(
-              'it\'s $activePlayer turn'.toUpperCase(),
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 52,
-              ),
-            ),
-            Text(
-              result,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 35,
-              ),
-            ),
-            Expanded(
-              child: GridView.count(
-                padding: const EdgeInsets.all(10.0),
-                mainAxisSpacing: 8.0,
-                crossAxisSpacing: 8.0,
-                childAspectRatio: 1.0,
-                crossAxisCount: 3,
-                children: List.generate(
-                    9,
-                    (index) => InkWell(
-                          borderRadius: BorderRadius.circular(16.0),
-                          onTap: gameOver || game.filledcells().contains(index)
-                              ? null
-                              : () {
-                                  myFun(index);
-                                  turns++;
-                                },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).primaryColor,
-                              borderRadius: BorderRadius.circular(16.0),
-                            ),
-                            child: Center(
-                              child: Text(
-                                Player.playerX.contains(index)
-                                    ? 'x'
-                                    : Player.playerO.contains(index)
-                                        ? 'o'
-                                        : '',
-                                style: TextStyle(
-                                    fontSize: 65,
-                                    color: Player.playerX.contains(index)
-                                        ? Colors.blue
-                                        : Colors.red),
-                              ),
-                            ),
-                          ),
-                        )),
-              ),
-            ),
-          ],
-        ),
       ),
+      floatingActionButtonLocation:
+          MediaQuery.of(context).orientation == Orientation.landscape
+              ? FloatingActionButtonLocation.startFloat
+              : FloatingActionButtonLocation.endFloat,
       floatingActionButton: Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
         child: FloatingActionButton.extended(
@@ -119,6 +75,99 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           backgroundColor: Theme.of(context).splashColor,
         ),
+      ),
+    );
+  }
+
+  List<Widget> firstBlock() {
+    return [
+      SizedBox(height: MediaQuery.of(context).size.height / 40),
+      SwitchListTile.adaptive(
+        title: Text(
+          MediaQuery.of(context).orientation == Orientation.portrait
+              ? 'Turn On/Off two player'
+              : 'Turn On/Off \n two player',
+          textAlign: MediaQuery.of(context).orientation == Orientation.landscape
+              ? TextAlign.center
+              : TextAlign.start,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 25,
+          ),
+        ),
+        value: isSwitched,
+        onChanged: (val) {
+          setState(() {
+            isSwitched = val;
+            // gameOver = val;
+          });
+        },
+      ),
+      SizedBox(
+        height: MediaQuery.of(context).size.height / 40,
+      ),
+      Text(
+        'it\'s $activePlayer turn'.toUpperCase(),
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 52,
+        ),
+      ),
+    ];
+  }
+
+  List<Widget> lastBlock() {
+    return [
+      Text(
+        result,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 35,
+        ),
+      ),
+      SizedBox(height: MediaQuery.of(context).size.height / 7)
+    ];
+  }
+
+  Expanded expandedWidget(BuildContext context) {
+    return Expanded(
+      child: GridView.count(
+        padding: const EdgeInsets.all(10.0),
+        mainAxisSpacing: 8.0,
+        crossAxisSpacing: 8.0,
+        childAspectRatio: 1.0,
+        crossAxisCount: 3,
+        children: List.generate(
+            9,
+            (index) => InkWell(
+                  borderRadius: BorderRadius.circular(16.0),
+                  onTap: gameOver || game.filledcells().contains(index)
+                      ? null
+                      : () {
+                          myFun(index);
+                          turns++;
+                        },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                    child: Center(
+                      child: Text(
+                        Player.playerX.contains(index)
+                            ? 'x'
+                            : Player.playerO.contains(index)
+                                ? 'o'
+                                : '',
+                        style: TextStyle(
+                            fontSize: 65,
+                            color: Player.playerX.contains(index)
+                                ? Colors.blue
+                                : Colors.red),
+                      ),
+                    ),
+                  ),
+                )),
       ),
     );
   }
